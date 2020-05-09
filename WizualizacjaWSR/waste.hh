@@ -7,6 +7,10 @@
 
 enum MaterialTypes { PET, Karton, HDPE, Alum, Nieznany };
 
+
+// QRECT NA QPOINT CZY COS
+
+
 class Waste: public QRect {
 //    Q_OBJECT
 public:
@@ -21,6 +25,7 @@ public:
 private:
     MaterialTypes Material;
     QColor Colour;
+    int Heaviness_Coefficient; // For decreasing number of Heavy Waste
     bool isHeavy;
 };
 

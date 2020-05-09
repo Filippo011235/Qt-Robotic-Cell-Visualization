@@ -1,37 +1,22 @@
 #include "waste.hh"
-#include <random>
 
 #include <cstdlib>
-#include <ctime>
 
 #include <QtDebug>
+
 using namespace std;
 
 Waste::Waste(vector<MaterialTypes> CurrentMaterials){
-    default_random_engine generator;
-
-    srand(time(nullptr));
 
     Material = CurrentMaterials[rand() % CurrentMaterials.size()];
-//    random_device rd; // obtain a random number from hardware
-//    mt19937 eng(rd()); // seed the generator
-//    uniform_int_distribution<> distr(0, 5); // define the range
-////    int DrugiInd = distr(eng);
-//    qDebug() << DrugiInd;
-//    for(auto i : CurrentMaterials){
-//        qDebug() << i;
-//    }
-    // Waste Material
 
-//    uniform_int_distribution<int> MaterialIndices(0,CurrentMaterials.size());
-//    Material = HDPE;
-//    qDebug() << Material;
+    Heaviness_Coefficient = rand() % 10;
+    if(Heaviness_Coefficient < 7){
+        isHeavy = false;
+    } else {
+        isHeavy = true;
+    }
 
-    // Waste heaviness
-//    uniform_int_distribution<int> IsOrIsnt(0,1);
-//    isHeavy = IsOrIsnt(generator);
-
-    // Waste Colour
     switch (Material) {
     case PET:
         Colour = Qt::green;
@@ -48,8 +33,9 @@ Waste::Waste(vector<MaterialTypes> CurrentMaterials){
     case Nieznany:
         Colour = Qt::red;
         break;
-    default:
+    default: // just in case
         Colour = Qt::darkCyan;
+        qDebug("Something went wrong declaring Material!");
         break;
     }
 }

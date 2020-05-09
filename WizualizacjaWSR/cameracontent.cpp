@@ -1,14 +1,12 @@
 #include "cameracontent.hh"
 
 #include <QPainter>
-#include <QPushButton>
 #include <QBrush>
 #include <QPalette>
-#include <QRect>
-#include <QColor>
 
 #define WASTE_SIZE 50
 
+// Temporary includes:
 #include <QtDebug>
 
 CameraContent::CameraContent(QWidget *parent) : QWidget(parent)
@@ -17,9 +15,8 @@ CameraContent::CameraContent(QWidget *parent) : QWidget(parent)
     _SpeedTimer->setInterval(50);
     _SpeedTimer->setObjectName("Timer");
 
-    BeforeRecognition = Qt::darkGray;
-
     _ConvBeltImage.load(":/ConvBelt.jpg");
+    ConvBeltHeight = _ConvBeltImage.height(); // used in Timer timeout
 
     _TopConvLocation_y = 0;
     _BottomConvLocation_y = _ConvBeltImage.height();
@@ -34,56 +31,63 @@ CameraContent::CameraContent(QWidget *parent) : QWidget(parent)
     QMetaObject::connectSlotsByName(this);
 }
 
-void CameraContent::paintEvent(QPaintEvent *)
-{
-
+void CameraContent::paintEvent(QPaintEvent *){
     QPainter Painter(this);
 
+    // Draw Top and Bottom Conveyor Belts
     Painter.drawImage(TabMiddle_x, _TopConvLocation_y, _ConvBeltImage);
     Painter.drawImage(TabMiddle_x, _BottomConvLocation_y, _ConvBeltImage);
 
-    for(unsigned int i=0; i < CurrentWasteStream.size(); i++){
-        if(CurrentWasteStream[i].y() < Threshold){
-            Painter.fillRect(RectMiddle, CurrentWasteStream[i].y(),
-                             WASTE_SIZE, WASTE_SIZE, CurrentWasteStream[i].getColour());
-//            Painter.fillRect(RectMiddle, CurrentWasteStream[i].y(),
-//                             WASTE_SIZE, WASTE_SIZE, Qt::red);
-//            qDebug() << "CC " << CurrentWasteStream[i].getColour();
-        } else {
-            Painter.fillRect(RectMiddle, CurrentWasteStream[i].y(),
-                             WASTE_SIZE, WASTE_SIZE, BeforeRecognition);
+    // Iterate over Waste Stream and draw each Waste
+    for(auto CurrentWaste : WasteStream){
+        if(CurrentWaste.y() < Threshold){ // Waste was recognized
+            Painter.fillRect(RectMiddle, CurrentWaste.y(),
+                             WASTE_SIZE, WASTE_SIZE, CurrentWaste.getColour());
+        } else {    // Yet to be classified
+            Painter.fillRect(RectMiddle, CurrentWaste.y(),
+                             WASTE_SIZE, WASTE_SIZE, _BeforeRecognition);
         }
     }
 
-//    Painter.drawRect(Szablon2);
 
 }
 
 void CameraContent::AddWaste(Waste NewOne)
 {
-    CurrentWasteStream.push_back(NewOne);
-//    CurrentWasteStream.back().setY(_BottomConvLocation_y);
-    CurrentWasteStream.back().setY(WasteTemplate.y());
+    NewOne.setY(ConvBeltHeight); // Start beneath the scene
+    WasteStream.push_back(NewOne);
 }
 
 void CameraContent::on_Timer_timeout()
 {
-    if(!CurrentWasteStream.empty()){
-        for (unsigned int i=0; i < CurrentWasteStream.size(); i++) {
-            CurrentWasteStream[i].setY(CurrentWasteStream[i].y() - _ConvSpeed);
+    // Update Conveyor Belts
+    _TopConvLocation_y -= _ConvSpeed;
+    if (_TopConvLocation_y < -ConvBeltHeight) // Full CB image is beyond the scene view
+            _TopConvLocation_y = ConvBeltHeight-10;
+    _BottomConvLocation_y -= _ConvSpeed;
+    if (_BottomConvLocation_y < -ConvBeltHeight) // Full CB image is beyond the scene view
+            _BottomConvLocation_y = ConvBeltHeight-10;
+
+    // Update Waste Stream
+    if(!WasteStream.empty()){
+//        for (auto CurrentWaste : WasteStream) {
+//            int Halo = CurrentWaste.y() - _ConvSpeed;
+//            CurrentWaste.setY(Halo);
+//            qDebug() << "auto Halo  " << Halo;
+//            qDebug() << "auto y  " << CurrentWaste.y();
+//        }
+        for (unsigned int i= 0; i < WasteStream.size(); ++i) {
+            int Halo = WasteStream[i].y() - _ConvSpeed;
+            WasteStream[i].setY(Halo);
+//            qDebug() << "meh Halo  " << Halo;
+//            qDebug() << "meh y  " << WasteStream[i].y();
         }
-        if(CurrentWasteStream[0].y() < -WASTE_SIZE){
-    //        qDebug() << "juz < 0";
-            CurrentWasteStream.erase(CurrentWasteStream.begin());
-    //            emit FAKEWasteSorted();
+        if(WasteStream[0].y() < -WASTE_SIZE){ // // Full Waste image is beyond the scene view
+            qDebug("Active delete");
+            WasteStream.erase(WasteStream.begin()); // FIFO
+//          emit FAKEWasteSorted(); // TO DO
         }
     }
-
-    _TopConvLocation_y -= _ConvSpeed;
-    if (_TopConvLocation_y < -_ConvBeltImage.height()) _TopConvLocation_y = _ConvBeltImage.height()-10;
-
-    _BottomConvLocation_y -= _ConvSpeed;
-    if (_BottomConvLocation_y < -_ConvBeltImage.height()) _BottomConvLocation_y = _ConvBeltImage.height()-10;
 
     update();
 }

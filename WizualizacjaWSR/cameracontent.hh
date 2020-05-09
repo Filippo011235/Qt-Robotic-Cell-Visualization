@@ -4,11 +4,11 @@
 #include <QWidget>
 #include <QImage>
 #include <QTimer>
-#include <vector>
-#include <waste.hh>
 #include <QRect>
 #include <QColor>
 
+#include <vector>
+#include <waste.hh>
 
 using namespace std;
 
@@ -18,22 +18,22 @@ class CameraContent : public QWidget
 
     QTimer *_SpeedTimer;
     QImage _ConvBeltImage;
+    int ConvBeltHeight; // Little optimization for Timer timeout?
     QRect WasteTemplate;
 
-    QColor BeforeRecognition;
+    const QColor _BeforeRecognition = Qt::darkGray; // Colour of unclassified Waste
 
-    int TabMiddle_x = 200;
-    int RectMiddle = 220;
+    const int TabMiddle_x = 200;
+    const int RectMiddle = 220;
 
-    int Halo;
-    int Threshold = 280;
+    const int Threshold = 280;
 
     int _ConvSpeed;
     int _TopConvLocation_y;
     int _BottomConvLocation_y;
 
-    int Usun_mnie;
-    vector<Waste> CurrentWasteStream;
+    // Keeps all the Waste on the scene
+    vector<Waste> WasteStream;
 
 public:
     explicit CameraContent(QWidget *parent = nullptr);
@@ -42,16 +42,16 @@ public:
 
     void AddWaste(Waste NewOne);
 
+    int SetConvSpeed(const int NewValue) {return _ConvSpeed = NewValue;}
+
     void ConvBeltMovement() {_SpeedTimer->start();}
     void ConvBeltStop() {_SpeedTimer->stop();}
-    int SetConvSpeed(const int NewValue) {return _ConvSpeed = NewValue;}
 
 signals:
     void FAKEWasteSorted();
 
 public slots:
     void on_Timer_timeout();
-//    void GenerateNextWaste(/*vector<MaterialTypes> CurrentMaterials*/);
 };
 
 #endif // CAMERACONTENT_HH

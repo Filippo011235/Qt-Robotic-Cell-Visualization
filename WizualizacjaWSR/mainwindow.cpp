@@ -2,8 +2,15 @@
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
+#include <algorithm>  // remove value from vector
+#include <cstdlib>  // srand
+#include <ctime>    // time
+
+// Temporary includes:
 #include <QtDebug>
-#include <algorithm>  // remove in vector by value
+
+#define DEFAULT_SPEED 50
+#define GENERATING_CONST 25000
 
 //#include "cameracontent.hh"
 //#include "cellcontent.hh"
@@ -15,50 +22,33 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->checkBoxNieznany->setChecked(true);
     ui->checkBoxPET->setChecked(true);
+    ui->horizontalScrollBarSzybTasm->setValue(DEFAULT_SPEED);
 
-
-    ui->horizontalScrollBarSzybTasm->setValue(50);
-
+    // Init view from Camera:
     ui->tabWidget->addTab(new CameraContent(this), "&Kamera");
+    // For accessing CameraScene methods
     CameraScene = static_cast<CameraContent*>(ui->tabWidget->currentWidget());
 
-    CameraScene->AddWaste(Waste(CurrentMaterials));
-
-    connect(CameraScene, SIGNAL(FAKEWasteSorted()), this, SLOT(DestroyWaste()));
-//  ui->tabWidget->addTab(new CellContent(), "&Cela");
-
-    eng = new mt19937(rd());
+    // Init general Waste handling(creating/destroying)
+    srand(time(nullptr)); // For generating random Waste Material in Waste.cpp
     _WasteGenerator = new QTimer(this);
-    _WasteGenerator->setInterval(500);
+    _WasteGenerator->setInterval(GENERATING_CONST/DEFAULT_SPEED);
     connect(_WasteGenerator, SIGNAL(timeout()), this, SLOT(CreateWaste()));
-    GeneratingWaste();
+    GeneratingWaste(); // Start creating waste
+    connect(CameraScene, SIGNAL(FAKEWasteSorted()), this, SLOT(DestroyWaste()));
 
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui;
 }
 
-void MainWindow::CreateWaste()
-{
-//    uniform_int_distribution<int> MaterialIndices(0,CurrentMaterials.size());
-//    int Index = MaterialIndices(generator); // Random index material from current ones
-//    Material = CurrentMaterials[Index];
-//    randint(2,3);
-//    qDebug() << Index;
-
+void MainWindow::CreateWaste(){
     Waste NewWaste(CurrentMaterials);
-//    qDebug() << "MW " << NewWaste.getColour();
-//    Waste Kokos(NewWaste);
-//    qDebug() << "MW Kokos " << Kokos.getColour();
-
     CameraScene->AddWaste(NewWaste);
-
 }
 
-void MainWindow::DestroyWaste()
-{
+void MainWindow::DestroyWaste() {
 //    if(bool Heavy){
 //        switch (WasteList[0].Material) {
 //        case XXX:
@@ -71,10 +61,14 @@ void MainWindow::DestroyWaste()
 void MainWindow::on_horizontalScrollBarSzybTasm_valueChanged(int value)
 {
     CameraScene->SetConvSpeed(value/10);
+    if(value){
+        _WasteGenerator->setInterval(GENERATING_CONST/value);
+    } else {    // value = 0
+        _WasteGenerator->setInterval(100000000); // StopGenerating() would require a restart
+    }
 }
 
-void MainWindow::on_pushButtonESTOP_clicked()
-{
+void MainWindow::on_pushButtonESTOP_clicked(){
     StopGenerating();
     CameraScene->ConvBeltStop();
     QMessageBox::critical(this, "E-STOP WYKRYTY", "Upewnij się, że wszystko w porządku i kliknij \"OK\"");
