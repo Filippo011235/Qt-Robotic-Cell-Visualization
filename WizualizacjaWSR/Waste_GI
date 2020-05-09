@@ -1,0 +1,113 @@
+
+#include <QPainter>
+#include <QGraphicsItem>
+#include <QGraphicsScene>
+#include <QtDebug>
+#include "mainwindow.hh"
+
+//enum Recyclables {PET, Karton, HDPE, Alum, Nieznany, Niezakwalifikowany};
+
+class Waste : public QGraphicsItem{
+public:
+    Waste();
+    Waste(const Waste&);
+    ~Waste();
+
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+
+//    void Classify(Recyclables Classification);
+protected:
+    void advance(int phase) override;
+
+private:
+//    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    qreal distance;
+    qreal speed;
+//    void ChangeMaterial();
+//    Recyclables Material = Niezakwalifikowany;
+};
+
+#include "waste.hh"
+
+Waste::Waste(){
+    setFlag(ItemIsMovable);
+    speed = 10;
+
+    int StartX = 0;
+    int StartY = 0;
+
+    setPos(mapToParent(StartX,StartY));
+}
+
+
+
+Waste::Waste(const Waste&){
+}
+
+Waste::~Waste(){
+}
+
+QRectF Waste::boundingRect() const
+{
+    return QRectF(0,0,40,40);
+}
+
+void Waste::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    QRectF rec = boundingRect();
+    QBrush brush(Qt::gray);
+
+    if(this->y() < -100){
+        brush.setColor(Qt::green);
+    } else {
+        brush.setColor(Qt::gray);
+    }
+    painter->fillRect(rec,brush);
+    painter->drawRect(rec);
+}
+
+
+void Waste::advance(int phase)
+{
+    if(!phase) return;
+    setPos(mapToParent(0,-(speed)));
+
+    QPointF location = this->pos();
+    QRectF rect = scene()->sceneRect();
+    if (!rect.contains(location)) {
+        qDebug() << "Poza scene";
+    } else {
+        qDebug() << "W srodku";
+    }
+//    if (change == ItemPositionChange && scene()) {
+//            // value is the new position.
+//            QPointF newPos = value.toPointF();
+
+//                // Keep the item inside the scene rect.
+//                newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
+//                newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
+//                return newPos;
+//            }
+//        }
+}
+
+//QVariant Waste::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+//{
+//    qDebug() << "HALO";
+//    if (change == ItemPositionChange && scene()) {
+//            // value is the new position.
+//            QPointF newPos = value.toPointF();
+//            QRectF rect = scene()->sceneRect();
+//            qDebug() << "Tuz przed";
+//            if (!rect.contains(newPos)) {
+//                qDebug() << "W srodku";
+//                // Keep the item inside the scene rect.
+//                newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
+//                newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
+//                return newPos;
+//            }
+//        }
+//        return QGraphicsItem::itemChange(change, value);
+//}
+

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ESTOP.png</file>
+        <file>ConvBelt.jpg</file>
+    </qresource>
+</RCC>

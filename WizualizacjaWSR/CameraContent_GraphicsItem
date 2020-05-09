@@ -1,0 +1,62 @@
+Ui::CameraContent *ui;
+QGraphicsScene *scene;
+QTimer *timer;
+QPixmap *ConvBelt;
+QImage sourceImage;
+//    QGraphicsEllipseItem *ellipse;
+//    QGraphicsRectItem *rectangle;
+
+
+
+CameraContent::CameraContent(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::CameraContent)
+{
+    ui->setupUi(this);
+
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+
+
+// Zapobieganie scrollowaniu ekranu:
+//    ui->graphicsView->setSceneRect(scene->sceneRect());
+//    QRect rcontent = ui->graphicsView->contentsRect();
+//    ui->graphicsView->setSceneRect(0, 0, rcontent.width(), rcontent.height());
+//   ui->graphicsView->setSceneRect(rcontent);
+
+/* Ekstra kolo
+//    QPen BlackPen(Qt::black);
+//    BlackPen.setWidth(6);
+//    QGraphicsEllipseItem *ellipse = scene->addEllipse(0,0,100,100,BlackPen,Qt::red);
+*/
+
+    // Tasmociag:
+    ConvBelt = new QPixmap("ConvBelt.jpg");
+    scene->addPixmap(*ConvBelt);
+
+    if(ConvBelt != NULL){
+        qDebug() << "cos zaladowal";
+        qDebug() << scene->items().count();
+    }
+
+
+//    scene->addPixmap(QPixmap("ESTOP.png"));
+//    scene->addPixmap(QPixmap::fromImage(*":ConvBelt.jpg"));
+
+//    QGraphicsPixmapItem* Obrazek = new QGraphicsPixmapItem(QPixmap(":ConvBelt.jpg"), this);
+
+//    sourceImage = new QImage;
+//    sourceImage.load("ConvBelt.jpg");
+//    ConvBelt = scene->addPixmap(QPixmap::fromImage(sourceImage));
+
+
+    // Dodanie odpadu
+    Waste *item = new Waste();
+    scene->addItem(item);
+
+    // Animacja
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
+    timer->start(1000);
+}
