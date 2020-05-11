@@ -60,6 +60,7 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(730, 426);
+        MainWindow->setLayoutDirection(Qt::LeftToRight);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         label_SzybTasm = new QLabel(centralwidget);
@@ -156,30 +157,41 @@ public:
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         lineEdit_PET = new QLineEdit(layoutWidget);
         lineEdit_PET->setObjectName(QStringLiteral("lineEdit_PET"));
+        lineEdit_PET->setLayoutDirection(Qt::RightToLeft);
+        lineEdit_PET->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         lineEdit_PET->setReadOnly(true);
 
         verticalLayout_3->addWidget(lineEdit_PET);
 
         lineEdit_Karton = new QLineEdit(layoutWidget);
         lineEdit_Karton->setObjectName(QStringLiteral("lineEdit_Karton"));
+        lineEdit_Karton->setLayoutDirection(Qt::RightToLeft);
+        lineEdit_Karton->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         lineEdit_Karton->setReadOnly(true);
 
         verticalLayout_3->addWidget(lineEdit_Karton);
 
         lineEdit_HDPE = new QLineEdit(layoutWidget);
         lineEdit_HDPE->setObjectName(QStringLiteral("lineEdit_HDPE"));
+        lineEdit_HDPE->setLayoutDirection(Qt::RightToLeft);
+        lineEdit_HDPE->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         lineEdit_HDPE->setReadOnly(true);
 
         verticalLayout_3->addWidget(lineEdit_HDPE);
 
         lineEdit_Alum = new QLineEdit(layoutWidget);
         lineEdit_Alum->setObjectName(QStringLiteral("lineEdit_Alum"));
+        lineEdit_Alum->setLayoutDirection(Qt::RightToLeft);
+        lineEdit_Alum->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         lineEdit_Alum->setReadOnly(true);
 
         verticalLayout_3->addWidget(lineEdit_Alum);
 
         lineEdit_Nieznany = new QLineEdit(layoutWidget);
         lineEdit_Nieznany->setObjectName(QStringLiteral("lineEdit_Nieznany"));
+        lineEdit_Nieznany->setLayoutDirection(Qt::RightToLeft);
+        lineEdit_Nieznany->setAutoFillBackground(false);
+        lineEdit_Nieznany->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         lineEdit_Nieznany->setReadOnly(true);
 
         verticalLayout_3->addWidget(lineEdit_Nieznany);

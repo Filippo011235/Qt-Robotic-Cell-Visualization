@@ -2,6 +2,7 @@
 #define MAINWINDOW_HH
 
 #include <QMainWindow>
+#include <QLineEdit>
 #include <vector>
 #include <waste.hh>
 #include <cameracontent.hh>
@@ -22,7 +23,7 @@ public:
 
 private slots:
     void CreateWaste();
-    void DestroyWaste();
+    void DestroyWaste(int);
 
     void on_horizontalScrollBarSzybTasm_valueChanged(int value);
     void on_pushButtonESTOP_clicked();
@@ -38,6 +39,9 @@ private:
     CameraContent *CameraScene;
     vector<MaterialTypes> CurrentMaterials;
     QTimer *_WasteGenerator;
+
+    int ValuesForLineEdit[5] = {0};
+    QLineEdit * WeightDisplays[5];
 
     void GeneratingWaste() {_WasteGenerator->start();}
     void StopGenerating() {_WasteGenerator->stop();}

@@ -56,13 +56,13 @@ static const uint qt_meta_data_CameraContent[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   24,    2, 0x06 /* Public */,
+       1,    1,   24,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    0,   25,    2, 0x0a /* Public */,
+       3,    0,   27,    2, 0x0a /* Public */,
 
  // signals: parameters
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    2,
 
  // slots: parameters
     QMetaType::Void,
@@ -76,21 +76,20 @@ void CameraContent::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         CameraContent *_t = static_cast<CameraContent *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->FAKEWasteSorted(); break;
+        case 0: _t->FAKEWasteSorted((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 1: _t->on_Timer_timeout(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            typedef void (CameraContent::*_t)();
+            typedef void (CameraContent::*_t)(int );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CameraContent::FAKEWasteSorted)) {
                 *result = 0;
                 return;
             }
         }
     }
-    Q_UNUSED(_a);
 }
 
 const QMetaObject CameraContent::staticMetaObject = {
@@ -130,9 +129,10 @@ int CameraContent::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void CameraContent::FAKEWasteSorted()
+void CameraContent::FAKEWasteSorted(int _t1)
 {
-    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

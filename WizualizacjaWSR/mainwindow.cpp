@@ -24,6 +24,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->checkBoxPET->setChecked(true);
     ui->horizontalScrollBarSzybTasm->setValue(DEFAULT_SPEED);
 
+    WeightDisplays[0] = ui->lineEdit_PET;
+    WeightDisplays[1] = ui->lineEdit_Karton;
+    WeightDisplays[2] = ui->lineEdit_HDPE;
+    WeightDisplays[3] = ui->lineEdit_Alum;
+    WeightDisplays[4] = ui->lineEdit_Nieznany;
+//    for (int i=0; i < 4; ++i) {
+//        WeightDisplays[i]->setLayoutDirection(Qt::LeftToRight);
+//    }
+
     // Init view from Camera:
     ui->tabWidget->addTab(new CameraContent(this), "&Kamera");
     // For accessing CameraScene methods
@@ -35,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     _WasteGenerator->setInterval(GENERATING_CONST/DEFAULT_SPEED);
     connect(_WasteGenerator, SIGNAL(timeout()), this, SLOT(CreateWaste()));
     GeneratingWaste(); // Start creating waste
-    connect(CameraScene, SIGNAL(FAKEWasteSorted()), this, SLOT(DestroyWaste()));
+    connect(CameraScene, SIGNAL(FAKEWasteSorted(int)), this, SLOT(DestroyWaste(int)));
 
 }
 
@@ -48,14 +57,12 @@ void MainWindow::CreateWaste(){
     CameraScene->AddWaste(NewWaste);
 }
 
-void MainWindow::DestroyWaste() {
-//    if(bool Heavy){
-//        switch (WasteList[0].Material) {
-//        case XXX:
-//            ui->lineEdit_PET ++
-//        }
-//    }
-//    WasteList.DELETEBEGINNING();
+void MainWindow::DestroyWaste(int WasteInformation) {
+    if(WasteInformation >= 0){      // Waste was Heavy
+        ValuesForLineEdit[WasteInformation] += 1;
+        QString NewValue = QString::number(ValuesForLineEdit[WasteInformation]);
+        WeightDisplays[WasteInformation]->setText(NewValue);
+    }
 }
 
 void MainWindow::on_horizontalScrollBarSzybTasm_valueChanged(int value)

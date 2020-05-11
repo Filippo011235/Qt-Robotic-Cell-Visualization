@@ -49,7 +49,6 @@ void CameraContent::paintEvent(QPaintEvent *){
         }
     }
 
-
 }
 
 void CameraContent::AddWaste(Waste NewOne)
@@ -65,35 +64,44 @@ void CameraContent::on_Timer_timeout()
     if (_TopConvLocation_y < -ConvBeltHeight) // Full CB image is beyond the scene view
             _TopConvLocation_y = ConvBeltHeight-10;
     _BottomConvLocation_y -= _ConvSpeed;
-    if (_BottomConvLocation_y < -ConvBeltHeight) // Full CB image is beyond the scene view
+    if (_BottomConvLocation_y < -ConvBeltHeight)
             _BottomConvLocation_y = ConvBeltHeight-10;
 
     // Update Waste Stream
     if(!WasteStream.empty()){
-//        for (auto CurrentWaste : WasteStream) {
-//            int Halo = CurrentWaste.y() - _ConvSpeed;
-//            CurrentWaste.setY(Halo);
-//            qDebug() << "auto Halo  " << Halo;
-//            qDebug() << "auto y  " << CurrentWaste.y();
-//        }
         for (unsigned int i= 0; i < WasteStream.size(); ++i) {
             int Halo = WasteStream[i].y() - _ConvSpeed;
             WasteStream[i].setY(Halo);
-//            qDebug() << "meh Halo  " << Halo;
-//            qDebug() << "meh y  " << WasteStream[i].y();
         }
-        if(WasteStream[0].y() < -WASTE_SIZE){ // // Full Waste image is beyond the scene view
-            qDebug("Active delete");
-            WasteStream.erase(WasteStream.begin()); // FIFO
-//          emit FAKEWasteSorted(); // TO DO
-        }
-    }
 
+        // Full Waste image is beyond the scene view
+        if(WasteStream[0].y() < -WASTE_SIZE){
+            if(WasteStream[0].getHeaviness()){
+//                emit FAKEWasteSorted(WasteStream[0].getMaterial);
+                switch (WasteStream[0].getMaterial()) {
+                case 0:
+                    emit FAKEWasteSorted(0);
+                    break;
+                case 1:
+                    emit FAKEWasteSorted(1);
+                    break;
+                case 2:
+                    emit FAKEWasteSorted(2);
+                    break;
+                case 3:
+                    emit FAKEWasteSorted(3);
+                    break;
+                case 4:
+                    emit FAKEWasteSorted(4);
+                    break;
+                } // switch
+            } else {
+                emit FAKEWasteSorted(-1);
+            }
+            WasteStream.erase(WasteStream.begin()); // FIFO
+        } // Waste beyond scene
+    } // if(!WasteStream.empty()
     update();
 }
 
-//void CameraContent::GenerateNextWaste(/*vector<MaterialTypes> CurrentMaterials*/){
-
-
-//}
 

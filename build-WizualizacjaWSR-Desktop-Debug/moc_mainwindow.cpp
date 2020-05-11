@@ -71,18 +71,18 @@ static const uint qt_meta_data_MainWindow[] = {
 
  // slots: name, argc, parameters, tag, flags
        1,    0,   59,    2, 0x08 /* Private */,
-       3,    0,   60,    2, 0x08 /* Private */,
-       4,    1,   61,    2, 0x08 /* Private */,
-       6,    0,   64,    2, 0x08 /* Private */,
-       7,    1,   65,    2, 0x08 /* Private */,
-       9,    1,   68,    2, 0x08 /* Private */,
-      10,    1,   71,    2, 0x08 /* Private */,
-      11,    1,   74,    2, 0x08 /* Private */,
-      12,    1,   77,    2, 0x08 /* Private */,
+       3,    1,   60,    2, 0x08 /* Private */,
+       4,    1,   63,    2, 0x08 /* Private */,
+       6,    0,   66,    2, 0x08 /* Private */,
+       7,    1,   67,    2, 0x08 /* Private */,
+       9,    1,   70,    2, 0x08 /* Private */,
+      10,    1,   73,    2, 0x08 /* Private */,
+      11,    1,   76,    2, 0x08 /* Private */,
+      12,    1,   79,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void, QMetaType::Int,    5,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,    8,
@@ -101,7 +101,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->CreateWaste(); break;
-        case 1: _t->DestroyWaste(); break;
+        case 1: _t->DestroyWaste((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 2: _t->on_horizontalScrollBarSzybTasm_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 3: _t->on_pushButtonESTOP_clicked(); break;
         case 4: _t->on_checkBoxPET_toggled((*reinterpret_cast< bool(*)>(_a[1]))); break;

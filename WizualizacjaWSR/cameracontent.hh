@@ -48,7 +48,7 @@ public:
     void ConvBeltStop() {_SpeedTimer->stop();}
 
 signals:
-    void FAKEWasteSorted();
+    void FAKEWasteSorted(int);
 
 public slots:
     void on_Timer_timeout();

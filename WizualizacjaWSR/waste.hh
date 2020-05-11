@@ -15,12 +15,12 @@ class Waste: public QRect {
 //    Q_OBJECT
 public:
     Waste(std::vector<MaterialTypes> CurrentMaterials);
-    // Ten konstruktor źle?
     Waste(const Waste& WasteCopy);
     ~Waste();
 
     MaterialTypes getMaterial() const {return Material;}
     QColor getColour() const{return Colour;}
+    bool getHeaviness() const{return isHeavy;}
 
 private:
     MaterialTypes Material;
