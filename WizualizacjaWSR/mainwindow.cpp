@@ -34,9 +34,12 @@ MainWindow::MainWindow(QWidget *parent)
 //    }
 
     // Init view from Camera:
+    ui->tabWidget->addTab(new CellContent(this), "&Cela");
+    CellScene = static_cast<CellContent*>(ui->tabWidget->widget(0));
     ui->tabWidget->addTab(new CameraContent(this), "&Kamera");
+    CameraScene = static_cast<CameraContent*>(ui->tabWidget->widget(1));
     // For accessing CameraScene methods
-    CameraScene = static_cast<CameraContent*>(ui->tabWidget->currentWidget());
+
 
     // Init general Waste handling(creating/destroying)
     srand(time(nullptr)); // For generating random Waste Material in Waste.cpp

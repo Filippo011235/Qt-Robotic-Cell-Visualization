@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../WizualizacjaWSR -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I../WizualizacjaWSR -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = WizualizacjaWSR1.0.0
 DISTDIR = /home/filip011235/WDS/Qt-Robotic-Cell-Visualization/build-WizualizacjaWSR-Desktop-Debug/.tmp/WizualizacjaWSR1.0.0
 LINK          = g++
 LFLAGS        = 
-LIBS          = $(SUBLIBS) -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lglut -lGLU -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -51,12 +51,14 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../WizualizacjaWSR/cameracontent.cpp \
+		../WizualizacjaWSR/cellcontent.cpp \
 		../WizualizacjaWSR/main.cpp \
 		../WizualizacjaWSR/mainwindow.cpp \
 		../WizualizacjaWSR/waste.cpp qrc_Images2D.cpp \
 		moc_cameracontent.cpp \
 		moc_mainwindow.cpp
 OBJECTS       = cameracontent.o \
+		cellcontent.o \
 		main.o \
 		mainwindow.o \
 		waste.o \
@@ -134,6 +136,7 @@ DIST          = ../WizualizacjaWSR/CameraContent_GraphicsItem \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		../WizualizacjaWSR/.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -154,8 +157,10 @@ DIST          = ../WizualizacjaWSR/CameraContent_GraphicsItem \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../WizualizacjaWSR/WizualizacjaWSR.pro ../WizualizacjaWSR/cameracontent.hh \
+		../WizualizacjaWSR/cellcontent.hh \
 		../WizualizacjaWSR/mainwindow.hh \
 		../WizualizacjaWSR/waste.hh ../WizualizacjaWSR/cameracontent.cpp \
+		../WizualizacjaWSR/cellcontent.cpp \
 		../WizualizacjaWSR/main.cpp \
 		../WizualizacjaWSR/mainwindow.cpp \
 		../WizualizacjaWSR/waste.cpp
@@ -238,6 +243,7 @@ Makefile: ../WizualizacjaWSR/WizualizacjaWSR.pro /usr/lib/x86_64-linux-gnu/qt5/m
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -259,6 +265,7 @@ Makefile: ../WizualizacjaWSR/WizualizacjaWSR.pro /usr/lib/x86_64-linux-gnu/qt5/m
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../WizualizacjaWSR/WizualizacjaWSR.pro \
 		../WizualizacjaWSR/Images2D.qrc \
+		/usr/lib/x86_64-linux-gnu/libQt5OpenGL.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Core.prl
@@ -331,6 +338,7 @@ Makefile: ../WizualizacjaWSR/WizualizacjaWSR.pro /usr/lib/x86_64-linux-gnu/qt5/m
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -352,6 +360,7 @@ Makefile: ../WizualizacjaWSR/WizualizacjaWSR.pro /usr/lib/x86_64-linux-gnu/qt5/m
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf:
 ../WizualizacjaWSR/WizualizacjaWSR.pro:
 ../WizualizacjaWSR/Images2D.qrc:
+/usr/lib/x86_64-linux-gnu/libQt5OpenGL.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Widgets.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Gui.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Core.prl:
@@ -371,8 +380,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../WizualizacjaWSR/Images2D.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../WizualizacjaWSR/cameracontent.hh ../WizualizacjaWSR/mainwindow.hh ../WizualizacjaWSR/waste.hh $(DISTDIR)/
-	$(COPY_FILE) --parents ../WizualizacjaWSR/cameracontent.cpp ../WizualizacjaWSR/main.cpp ../WizualizacjaWSR/mainwindow.cpp ../WizualizacjaWSR/waste.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../WizualizacjaWSR/cameracontent.hh ../WizualizacjaWSR/cellcontent.hh ../WizualizacjaWSR/mainwindow.hh ../WizualizacjaWSR/waste.hh $(DISTDIR)/
+	$(COPY_FILE) --parents ../WizualizacjaWSR/cameracontent.cpp ../WizualizacjaWSR/cellcontent.cpp ../WizualizacjaWSR/main.cpp ../WizualizacjaWSR/mainwindow.cpp ../WizualizacjaWSR/waste.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../WizualizacjaWSR/mainwindow.ui $(DISTDIR)/
 	$(COPY_FILE) --parents WizualizacjaWSR_pl_PL.ts $(DISTDIR)/
 
@@ -420,14 +429,15 @@ moc_cameracontent.cpp: ../WizualizacjaWSR/waste.hh \
 		../WizualizacjaWSR/cameracontent.hh \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/filip011235/WDS/Qt-Robotic-Cell-Visualization/WizualizacjaWSR -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../WizualizacjaWSR/cameracontent.hh -o moc_cameracontent.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/filip011235/WDS/Qt-Robotic-Cell-Visualization/WizualizacjaWSR -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../WizualizacjaWSR/cameracontent.hh -o moc_cameracontent.cpp
 
 moc_mainwindow.cpp: ../WizualizacjaWSR/waste.hh \
 		../WizualizacjaWSR/cameracontent.hh \
+		../WizualizacjaWSR/cellcontent.hh \
 		../WizualizacjaWSR/mainwindow.hh \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/filip011235/WDS/Qt-Robotic-Cell-Visualization/WizualizacjaWSR -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../WizualizacjaWSR/mainwindow.hh -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/filip011235/WDS/Qt-Robotic-Cell-Visualization/WizualizacjaWSR -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../WizualizacjaWSR/mainwindow.hh -o moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -452,14 +462,19 @@ cameracontent.o: ../WizualizacjaWSR/cameracontent.cpp ../WizualizacjaWSR/camerac
 		../WizualizacjaWSR/waste.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cameracontent.o ../WizualizacjaWSR/cameracontent.cpp
 
+cellcontent.o: ../WizualizacjaWSR/cellcontent.cpp ../WizualizacjaWSR/cellcontent.hh
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cellcontent.o ../WizualizacjaWSR/cellcontent.cpp
+
 main.o: ../WizualizacjaWSR/main.cpp ../WizualizacjaWSR/mainwindow.hh \
 		../WizualizacjaWSR/waste.hh \
-		../WizualizacjaWSR/cameracontent.hh
+		../WizualizacjaWSR/cameracontent.hh \
+		../WizualizacjaWSR/cellcontent.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../WizualizacjaWSR/main.cpp
 
 mainwindow.o: ../WizualizacjaWSR/mainwindow.cpp ../WizualizacjaWSR/mainwindow.hh \
 		../WizualizacjaWSR/waste.hh \
 		../WizualizacjaWSR/cameracontent.hh \
+		../WizualizacjaWSR/cellcontent.hh \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../WizualizacjaWSR/mainwindow.cpp
 

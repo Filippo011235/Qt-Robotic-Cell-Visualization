@@ -65,10 +65,11 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         label_SzybTasm = new QLabel(centralwidget);
         label_SzybTasm->setObjectName(QStringLiteral("label_SzybTasm"));
-        label_SzybTasm->setGeometry(QRect(550, 150, 149, 19));
+        label_SzybTasm->setGeometry(QRect(540, 150, 161, 20));
         QFont font;
         font.setPointSize(12);
         label_SzybTasm->setFont(font);
+        label_SzybTasm->setAlignment(Qt::AlignCenter);
         horizontalScrollBarSzybTasm = new QScrollBar(centralwidget);
         horizontalScrollBarSzybTasm->setObjectName(QStringLiteral("horizontalScrollBarSzybTasm"));
         horizontalScrollBarSzybTasm->setGeometry(QRect(530, 180, 181, 21));

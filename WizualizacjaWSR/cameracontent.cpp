@@ -25,7 +25,7 @@ CameraContent::CameraContent(QWidget *parent) : QWidget(parent)
     connect(_SpeedTimer, SIGNAL(timeout()),this,SLOT(on_Timer_timeout()));
     ConvBeltMovement();
 
-//    WasteTemplate.setRect(TabMiddle_x+17,_BottomConvLocation_y,WASTE_SIZE,WASTE_SIZE);
+    // WasteTemplate.setRect(TabMiddle_x+17,_BottomConvLocation_y,WASTE_SIZE,WASTE_SIZE);
     WasteTemplate.setRect(RectMiddle,_BottomConvLocation_y,WASTE_SIZE,WASTE_SIZE);
 
     QMetaObject::connectSlotsByName(this);

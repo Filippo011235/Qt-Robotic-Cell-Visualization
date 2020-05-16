@@ -1,4 +1,4 @@
-QT       += core gui #3dcore 3drender 3dinput 3dextras
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,17 +17,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     cameracontent.cpp \
+    cellcontent.cpp \
     main.cpp \
     mainwindow.cpp \
     waste.cpp
 
 HEADERS += \
     cameracontent.hh \
+    cellcontent.hh \
     mainwindow.hh \
     waste.hh
 
 FORMS += \
     mainwindow.ui
+
+LIBS   += -lglut -lGLU
 
 TRANSLATIONS += \
     WizualizacjaWSR_pl_PL.ts

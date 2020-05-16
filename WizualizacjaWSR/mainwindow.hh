@@ -6,6 +6,7 @@
 #include <vector>
 #include <waste.hh>
 #include <cameracontent.hh>
+#include <cellcontent.hh>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     CameraContent *CameraScene;
+    CellContent *CellScene;
     vector<MaterialTypes> CurrentMaterials;
     QTimer *_WasteGenerator;
 

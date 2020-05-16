@@ -19,12 +19,13 @@ void CellContent::initializeGL(){
     glClearColor(0.7, 0.7, 0.7, 0.8);
     static GLfloat lightPosition[4] = { 1.0, 1.0, 1.0, 1.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_SMOOTH);  // Smooth shading. The shadow smoothes the fine blend of colors through the polygon and smoothes the external light.
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
-    gluPerspective(45.0, 0, 0.01, 100.0);
+ 
 
 
 }
