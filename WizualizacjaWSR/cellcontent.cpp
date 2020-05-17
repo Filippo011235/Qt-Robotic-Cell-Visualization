@@ -39,16 +39,16 @@ void CellContent::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // Isometric view
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity(); // Resets the current model observation matrix.
     /* use this length so that camera is 1 unit away from origin */
-    double dist = 0.4;
+    double dist = 5;
     gluLookAt(dist, dist, dist,  /* position of camera */
               0.0,  0,  0.0,   /* where camera is pointing at */
               0.0,  1.0,  0.0);  /* which direction is up */
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
     // Coordinate system
 /*    glBegin(GL_LINES);
     glColor3d(1.0, 0.0, 0.0);
@@ -65,12 +65,12 @@ void CellContent::paintGL(){
     glEnd();
 */
 
-    glTranslatef(0.2, 0, 0);
+    glTranslatef(1, 0, 0);
     glColor3f(0.7,0.7,0.7);
-    glutSolidCube(0.4);
+    glutSolidCube(1);
 //    glFlush();
 
-//    glLoadIdentity(); Resets the current model observation matrix.
+//    glLoadIdentity();
 
 }
 
