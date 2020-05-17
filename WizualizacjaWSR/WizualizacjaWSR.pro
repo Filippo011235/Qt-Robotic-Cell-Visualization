@@ -41,10 +41,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    CameraContent_GraphicsItem \
-    Waste_GI \
-    kod_z_3d
+DISTFILES +=
 
 RESOURCES += \
     Images2D.qrc

@@ -8,6 +8,9 @@ CellContent::CellContent(QWidget *parent): QGLWidget(parent){
     connect(_SpeedTimer, SIGNAL(timeout()),this,SLOT(updateGL()));
     ConvBeltMovement();
 
+//    alpha = 25;
+//    beta = -25;
+//    distance = 2.5;
 
     QMetaObject::connectSlotsByName(this);
 }
@@ -16,33 +19,58 @@ CellContent::~CellContent(){
 }
 
 void CellContent::initializeGL(){
-    glClearColor(0.7, 0.7, 0.7, 0.8);
-    static GLfloat lightPosition[4] = { 1.0, 1.0, 1.0, 1.0 };
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
+    glClearColor(1,1,1,0); // Background colour
+    glEnable(GL_DEPTH_TEST); // For rendering 3D
+    glEnable(GL_CULL_FACE); // Display only visible front of the objects
+
+//    static GLfloat lightPosition[4] = { 1.0, 1.0, 1.0, 1.0 };
+//    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+    glShadeModel(GL_SMOOTH);  // Smooth shading. The shadow smoothes the fine blend of colors through the polygon and smoothes the external light.
+
+//    glEnable(GL_LIGHTING);
+//    glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
-    gluPerspective(45.0, 0, 0.01, 100.0);
 
 
 }
 
 void CellContent::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-//    glLoadIdentity();
 
-    glRotatef(0.5, 1, 1, 1);
-//    glTranslatef(0.01, 0.01, 0);
-//    glutWireTeapot(1);
-//    glutSolidCube(2);
-//    glMatrixMode(GL_MODELVIEW);
+    // Isometric view
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    /* use this length so that camera is 1 unit away from origin */
+    double dist = 0.4;
+    gluLookAt(dist, dist, dist,  /* position of camera */
+              0.0,  0,  0.0,   /* where camera is pointing at */
+              0.0,  1.0,  0.0);  /* which direction is up */
 
-//    gluLookAt(0,0,5, 0,0,0, 0,1,0);
-    glColor3f(0,1,0);
-//    glutSolidSphere(1,20,20);
-    glutSolidCube(2);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    // Coordinate system
+/*    glBegin(GL_LINES);
+    glColor3d(1.0, 0.0, 0.0);
+    glVertex3d(0.0, 0.0, 0.0);
+    glVertex3d(1.0, 0.0, 0.0);
+
+    glColor3d(0.0, 1.0, 0.0);
+    glVertex3d(0.0, 0.0, 0.0);
+    glVertex3d(0.0, 1.0, 0.0);
+
+    glColor3d(0.0, 0.0, 1.0);
+    glVertex3d(0.0, 0.0, 0.0);
+    glVertex3d(0.0, 0.0, 1.0);
+    glEnd();
+*/
+
+    glTranslatef(0.2, 0, 0);
+    glColor3f(0.7,0.7,0.7);
+    glutSolidCube(0.4);
+//    glFlush();
+
+//    glLoadIdentity(); Resets the current model observation matrix.
 
 }
 

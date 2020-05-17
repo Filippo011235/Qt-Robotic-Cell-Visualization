@@ -65,10 +65,7 @@ OBJECTS       = cameracontent.o \
 		qrc_Images2D.o \
 		moc_cameracontent.o \
 		moc_mainwindow.o
-DIST          = ../WizualizacjaWSR/CameraContent_GraphicsItem \
-		../WizualizacjaWSR/Waste_GI \
-		../WizualizacjaWSR/kod_z_3d \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
+DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/sanitize.conf \

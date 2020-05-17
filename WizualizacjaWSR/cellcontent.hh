@@ -20,6 +20,10 @@ private:
     QTimer *_SpeedTimer;
     void ConvBeltMovement() {_SpeedTimer->start();}
     void ConvBeltStop() {_SpeedTimer->stop();}
+
+//    double alpha;
+//    double beta;
+//    double distance;
 };
 
 #endif // CELLCONTENT_HH
