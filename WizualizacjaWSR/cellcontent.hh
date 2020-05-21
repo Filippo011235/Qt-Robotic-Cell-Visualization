@@ -20,6 +20,8 @@ private:
     QTimer *_SpeedTimer;
     void ConvBeltMovement() {_SpeedTimer->start();}
     void ConvBeltStop() {_SpeedTimer->stop();}
+    float WasteZCoord;
+    void DrawConvBelt();
 
 //    double alpha;
 //    double beta;
