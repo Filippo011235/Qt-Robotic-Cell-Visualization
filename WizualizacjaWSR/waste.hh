@@ -21,10 +21,12 @@ public:
     MaterialTypes getMaterial() const {return Material;}
     QColor getColour() const{return Colour;}
     bool getHeaviness() const{return isHeavy;}
-
+    float getLocation() const {return Location;}
+    void setLocation(float NewLocation) {Location = NewLocation;}
 private:
     MaterialTypes Material;
     QColor Colour;
+    float Location;
     int Heaviness_Coefficient; // For decreasing number of Heavy Waste
     bool isHeavy;
 };

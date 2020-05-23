@@ -4,12 +4,21 @@
 #include <QGLWidget>
 #include <GL/glut.h>
 #include <QTimer>
+#include "waste.hh"
+#include <vector>
+
+using namespace std;
 
 class CellContent : public QGLWidget
 {
 public:
     CellContent(QWidget *parent = nullptr);
     ~CellContent();
+
+    void AddWaste(Waste NewOne);
+    void setConvSpeed(int NewInterval){_SpeedTimer->setInterval(NewInterval);};
+    void ConvBeltMovement() {_SpeedTimer->start();}
+    void ConvBeltStop() {_SpeedTimer->stop();}
 
 protected:
     void initializeGL() override;
@@ -18,10 +27,16 @@ protected:
 
 private:
     QTimer *_SpeedTimer;
-    void ConvBeltMovement() {_SpeedTimer->start();}
-    void ConvBeltStop() {_SpeedTimer->stop();}
+    Waste *Kokos;
+    qreal rgb[3]; // Stores Waste colour
+    float ConvSpeed;
     float WasteZCoord;
     void DrawConvBelt();
+
+    const float _BeforeRecognition = 0.5;
+
+    // Keeps all the Waste on the scene
+    vector<Waste> WasteStream;
 
 //    double alpha;
 //    double beta;

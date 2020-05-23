@@ -1,18 +1,19 @@
 #include "cellcontent.hh"
 
-#define STEP 0.02
+//#define STEP 0.5
 
 #include <QtDebug>
+#include <QColor>
 
 CellContent::CellContent(QWidget *parent): QGLWidget(parent){
     _SpeedTimer = new QTimer(this);
-    _SpeedTimer->setInterval(50);
+    _SpeedTimer->setInterval(40);
     _SpeedTimer->setObjectName("Timer");
+
+    ConvSpeed = 0.25;
 
     connect(_SpeedTimer, SIGNAL(timeout()),this,SLOT(updateGL()));
     ConvBeltMovement();
-
-    WasteZCoord = 5;
 
     QMetaObject::connectSlotsByName(this);
 }
@@ -75,17 +76,23 @@ void CellContent::paintGL(){
               0.0,  0,  0.0,   /* where camera is pointing at */
               0.0,  1.0,  0.0);  /* which direction is up */
 
-    WasteZCoord -= STEP;
-    if(WasteZCoord <= -7){
-//        qDebug("kokosik");
+    if(!WasteStream.empty()){
+        for (unsigned int i= 0; i < WasteStream.size(); ++i) {
+            WasteStream[i].setLocation(WasteStream[i].getLocation() - ConvSpeed);
+            if(WasteStream[i].getLocation() <= 2.5){
+                WasteStream[i].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
+                glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
+            } else {
+                glColor3f(_BeforeRecognition,_BeforeRecognition,_BeforeRecognition);
+            }
+            glLoadIdentity();
+            gluLookAt(dist, dist, dist,  /* position of camera */
+                      0.0,  0,  0.0,   /* where camera is pointing at */
+                      0.0,  1.0,  0.0);  /* which direction is up */
+            glTranslatef(0, 0, WasteStream[i].getLocation());
+            glutSolidCube(1);
+        }
     }
-
-    glTranslatef(0, 0, WasteZCoord);
-    float UnknownWasteColour = 0.4;
-    glColor3f(UnknownWasteColour,UnknownWasteColour,UnknownWasteColour);
-    glutSolidCube(1);
-
-//    glFlush();
 
 }
 
@@ -100,6 +107,12 @@ void CellContent::resizeGL(int w, int h){
     gluLookAt(0,0,5, 0,0,0, 0,1,0);
     updateGL();
 
+}
+
+void CellContent::AddWaste(Waste NewOne)
+{
+    NewOne.setLocation(5); // Start beneath the scene
+    WasteStream.push_back(NewOne);
 }
 
 void CellContent::DrawConvBelt(){

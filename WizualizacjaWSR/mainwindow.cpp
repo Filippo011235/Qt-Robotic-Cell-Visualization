@@ -58,6 +58,7 @@ MainWindow::~MainWindow(){
 void MainWindow::CreateWaste(){
     Waste NewWaste(CurrentMaterials);
     CameraScene->AddWaste(NewWaste);
+    CellScene->AddWaste(NewWaste);
 }
 
 void MainWindow::DestroyWaste(int WasteInformation) {
@@ -71,6 +72,8 @@ void MainWindow::DestroyWaste(int WasteInformation) {
 void MainWindow::on_horizontalScrollBarSzybTasm_valueChanged(int value)
 {
     CameraScene->SetConvSpeed(value/10);
+    qDebug() << (float)value/200;
+    CellScene->setConvSpeed((float)value/200);
     if(value){
         _WasteGenerator->setInterval(GENERATING_CONST/value);
     } else {    // value = 0
@@ -81,8 +84,10 @@ void MainWindow::on_horizontalScrollBarSzybTasm_valueChanged(int value)
 void MainWindow::on_pushButtonESTOP_clicked(){
     StopGenerating();
     CameraScene->ConvBeltStop();
+    CellScene->ConvBeltStop();
     QMessageBox::critical(this, "E-STOP WYKRYTY", "Upewnij się, że wszystko w porządku i kliknij \"OK\"");
     CameraScene->ConvBeltMovement();
+    CellScene->ConvBeltMovement();
     GeneratingWaste();
 }
 

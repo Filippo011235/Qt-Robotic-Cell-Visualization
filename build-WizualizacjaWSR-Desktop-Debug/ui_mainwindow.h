@@ -218,7 +218,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "WaSoR", Q_NULLPTR));
         label_SzybTasm->setText(QApplication::translate("MainWindow", "Szybko\305\233\304\207 ta\305\233moci\304\205gu", Q_NULLPTR));
         pushButtonESTOP->setText(QString());
         label->setText(QApplication::translate("MainWindow", " Materia\305\202", Q_NULLPTR));
