@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // Init general Waste handling(creating/destroying)
-    srand(time(nullptr)); // For generating random Waste Material in Waste.cpp
+    srand(time(nullptr)); // For generating random Waste Material, Weight in Waste.cpp
     _WasteGenerator = new QTimer(this);
     _WasteGenerator->setInterval(GENERATING_CONST/DEFAULT_SPEED);
     connect(_WasteGenerator, SIGNAL(timeout()), this, SLOT(CreateWaste()));
@@ -72,8 +72,8 @@ void MainWindow::DestroyWaste(int WasteInformation) {
 void MainWindow::on_horizontalScrollBarSzybTasm_valueChanged(int value)
 {
     CameraScene->SetConvSpeed(value/10);
-    qDebug() << (float)value/200;
     CellScene->setConvSpeed((float)value/200);
+//    CellScene->setConvSpeed((float)value);
     if(value){
         _WasteGenerator->setInterval(GENERATING_CONST/value);
     } else {    // value = 0
