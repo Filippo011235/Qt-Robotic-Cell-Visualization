@@ -56,6 +56,7 @@ SOURCES       = ../WizualizacjaWSR/cameracontent.cpp \
 		../WizualizacjaWSR/mainwindow.cpp \
 		../WizualizacjaWSR/waste.cpp qrc_Images2D.cpp \
 		moc_cameracontent.cpp \
+		moc_cellcontent.cpp \
 		moc_mainwindow.cpp
 OBJECTS       = cameracontent.o \
 		cellcontent.o \
@@ -64,6 +65,7 @@ OBJECTS       = cameracontent.o \
 		waste.o \
 		qrc_Images2D.o \
 		moc_cameracontent.o \
+		moc_cellcontent.o \
 		moc_mainwindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -419,14 +421,20 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -Wall -W -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_cameracontent.cpp moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_cameracontent.cpp moc_cellcontent.cpp moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_cameracontent.cpp moc_mainwindow.cpp
+	-$(DEL_FILE) moc_cameracontent.cpp moc_cellcontent.cpp moc_mainwindow.cpp
 moc_cameracontent.cpp: ../WizualizacjaWSR/waste.hh \
 		../WizualizacjaWSR/cameracontent.hh \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/filip011235/WDS/Qt-Robotic-Cell-Visualization/WizualizacjaWSR -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../WizualizacjaWSR/cameracontent.hh -o moc_cameracontent.cpp
+
+moc_cellcontent.cpp: ../WizualizacjaWSR/waste.hh \
+		../WizualizacjaWSR/cellcontent.hh \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/filip011235/WDS/Qt-Robotic-Cell-Visualization/WizualizacjaWSR -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../WizualizacjaWSR/cellcontent.hh -o moc_cellcontent.cpp
 
 moc_mainwindow.cpp: ../WizualizacjaWSR/waste.hh \
 		../WizualizacjaWSR/cameracontent.hh \
@@ -459,7 +467,8 @@ cameracontent.o: ../WizualizacjaWSR/cameracontent.cpp ../WizualizacjaWSR/camerac
 		../WizualizacjaWSR/waste.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cameracontent.o ../WizualizacjaWSR/cameracontent.cpp
 
-cellcontent.o: ../WizualizacjaWSR/cellcontent.cpp ../WizualizacjaWSR/cellcontent.hh
+cellcontent.o: ../WizualizacjaWSR/cellcontent.cpp ../WizualizacjaWSR/cellcontent.hh \
+		../WizualizacjaWSR/waste.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cellcontent.o ../WizualizacjaWSR/cellcontent.cpp
 
 main.o: ../WizualizacjaWSR/main.cpp ../WizualizacjaWSR/mainwindow.hh \
@@ -483,6 +492,9 @@ qrc_Images2D.o: qrc_Images2D.cpp
 
 moc_cameracontent.o: moc_cameracontent.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_cameracontent.o moc_cameracontent.cpp
+
+moc_cellcontent.o: moc_cellcontent.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_cellcontent.o moc_cellcontent.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

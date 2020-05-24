@@ -11,6 +11,8 @@ using namespace std;
 
 class CellContent : public QGLWidget
 {
+    Q_OBJECT
+
 public:
     CellContent(QWidget *parent = nullptr);
     ~CellContent();
@@ -25,6 +27,9 @@ protected:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int w, int h) override;
+
+signals:
+    void WasteSorted(int);
 
 private:
     QTimer *_SpeedTimer;
@@ -44,6 +49,10 @@ private:
     const float _BeforeRecognition = 0.5;
 
     // Keeps all the Waste on the scene
+    vector<Waste> MaterialStreams[5];
+    float ContainerDistances_X[5] = {-3, -3, 1, 1, -1};
+    float ContainerDistances_Z[5] = {-3,-5.3,-3,-5.3,-7.5};
+
     vector<Waste> WasteStream;
 
     vector<Waste> PETStream;
@@ -52,9 +61,24 @@ private:
     vector<Waste> AlumStream;
     vector<Waste> NieznaneStream;
 
-//    double alpha;
-//    double beta;
-//    double distance;
+    // Sorting
+    typedef void (*SortingFunctions) ();
+    void PETSort();
+    void KartonSort();
+    void HDPESort();
+    void AlumSort();
+    void NieznaneSort();
+    SortingFunctions MaterialSorting[5];
+//    SortingFunctions MaterialSorting[5] = {
+//        this->PETSort,
+//        KartonSort,
+//        HDPESort,
+//        AlumSort,
+//        NieznaneSort
+//    };
+
+
+
 };
 
 #endif // CELLCONTENT_HH

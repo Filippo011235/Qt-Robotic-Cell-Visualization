@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     _WasteGenerator->setInterval(GENERATING_CONST/DEFAULT_SPEED);
     connect(_WasteGenerator, SIGNAL(timeout()), this, SLOT(CreateWaste()));
     GeneratingWaste(); // Start creating waste
-    connect(CameraScene, SIGNAL(FAKEWasteSorted(int)), this, SLOT(DestroyWaste(int)));
+    connect(CellScene, SIGNAL(WasteSorted(int)), this, SLOT(DestroyWaste(int)));
 
 }
 

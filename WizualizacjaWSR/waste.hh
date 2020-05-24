@@ -20,9 +20,10 @@ public:
     MaterialTypes getMaterial() const {return Material;}
     QColor getColour() const{return Colour;}
     bool getHeaviness() const{return isHeavy;}
-    float getLocation() const {return Location;}
-    void setLocation(float NewLocation) {Location = NewLocation;}
-
+    float getZLocation() const {return ZLocation;}
+    void setZLocation(float NewLocation) {ZLocation = NewLocation;}
+    void ZAdvance(float Step){ZLocation -= Step;} // Reversed direction on both Views
+    void XAdvance(float Step){XLocation -= Step;} // Reversed direction on both Views
     float getXLocation() const {return XLocation;}
     void setXLocation(float NewLocation) {XLocation = NewLocation;}
 
@@ -32,7 +33,7 @@ public:
 private:
     MaterialTypes Material;
     QColor Colour;
-    float Location;
+    float ZLocation;
     float XLocation;
     int Heaviness_Coefficient; // For decreasing number of Heavy Waste
     bool isHeavy;

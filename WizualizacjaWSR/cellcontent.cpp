@@ -6,6 +6,20 @@
 #include <QColor>
 
 CellContent::CellContent(QWidget *parent): QGLWidget(parent){
+//    SortingFunctions MaterialSorting[5] = {
+//        CellContent::PETSort,
+//        KartonSort,
+//        HDPESort,
+//        AlumSort,
+//        NieznaneSort
+//    };
+//    MaterialSorting[0] = &CellContent::PETSort;
+//        KartonSort,
+//        HDPESort,
+//        AlumSort,
+//        NieznaneSort
+//    };
+
     _SpeedTimer = new QTimer(this);
     _SpeedTimer->setInterval(40);
     _SpeedTimer->setObjectName("Timer");
@@ -88,25 +102,90 @@ void CellContent::paintGL(){
     DrawContainer(-1,-7.5, rgb[0], rgb[1], rgb[2]);
     SetScene();
 
-    if(!WasteStream.empty()){
-        for (unsigned int i= 0; i < WasteStream.size(); ++i) {
-            WasteStream[i].setLocation(WasteStream[i].getLocation() - ConvSpeed);
-            if(WasteStream[i].getLocation() <= 2.5){
-                WasteStream[i].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-                glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
-            } else {
-                glColor3f(_BeforeRecognition,_BeforeRecognition,_BeforeRecognition);
-            }
-//            switch (WasteStream[i].getMaterial()) {
-//            case PET:
+    //**********************************************************
 
-//            }
-//            if(WasteStream[i].getLocation() <= 2.5)
-            SetScene();
-            glTranslatef(0, 0, WasteStream[i].getLocation());
-            glutSolidCube(1);
+
+    for(int i = 0; i < 5; ++i){
+        if(!MaterialStreams[i].empty()){
+            for (unsigned int j = 0; j < MaterialStreams[i].size(); ++j) {
+                SetScene();
+                if(MaterialStreams[i][j].getZLocation() >= ContainerDistances_Z[i]+1){
+                    if(MaterialStreams[i][j].getZLocation() <= 2.5){
+                        MaterialStreams[i][j].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
+                        glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
+                    } else {
+                        glColor3f(_BeforeRecognition,_BeforeRecognition,_BeforeRecognition);
+                    }
+
+                    MaterialStreams[i][j].ZAdvance(ConvSpeed);
+                    glTranslatef(0, 0, MaterialStreams[i][j].getZLocation());
+                    glutSolidCube(1);
+
+                } else { // Point of Ascension
+                    MaterialStreams[i][j].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
+                    glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
+                    switch (i) {
+                    case 0:
+                        if(MaterialStreams[i][j].getXLocation() <= ContainerDistances_X[i]+1.25){
+                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
+                            if(MaterialStreams[i][j].getHeaviness()){
+                                emit WasteSorted(i);
+                            }
+                        } else {
+                            MaterialStreams[i][j].XAdvance(ConvSpeed);
+                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
+                            glutSolidCube(1);
+                        }
+                        break;
+                    case 1:
+                        if(MaterialStreams[i][j].getXLocation() <= ContainerDistances_X[i]+1.25){
+                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
+                            if(MaterialStreams[i][j].getHeaviness()){
+                                emit WasteSorted(i);
+                            }
+                        } else {
+                            MaterialStreams[i][j].XAdvance(ConvSpeed);
+                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
+                            glutSolidCube(1);
+                        }
+                        break;
+                    case 2:
+                        if(MaterialStreams[i][j].getXLocation() >= ContainerDistances_X[i]+0.75){
+                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
+                            if(MaterialStreams[i][j].getHeaviness()){
+                                emit WasteSorted(i);
+                            }
+                        } else {
+                            MaterialStreams[i][j].XAdvance(-ConvSpeed);
+                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
+                            glutSolidCube(1);
+                        }
+                        break;
+                    case 3:
+                        if(MaterialStreams[i][j].getXLocation() >= ContainerDistances_X[i]+0.75){
+                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
+                            if(MaterialStreams[i][j].getHeaviness()){
+                                emit WasteSorted(i);
+                            }
+                        } else {
+                            MaterialStreams[i][j].XAdvance(-ConvSpeed);
+                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
+                            glutSolidCube(1);
+                        }
+                        break;
+                    case 4:
+                        MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
+                        if(MaterialStreams[i][j].getHeaviness()){
+                            emit WasteSorted(i);
+                        }
+                        break;
+                    }
+                }
+
+            }
         }
     }
+
 
 }
 
@@ -125,8 +204,10 @@ void CellContent::resizeGL(int w, int h){
 
 void CellContent::AddWaste(Waste NewOne)
 {
-    NewOne.setLocation(5); // Start behind the scene
-    WasteStream.push_back(NewOne);
+    NewOne.setZLocation(5); // Start behind the scene
+    NewOne.setXLocation(0);
+    MaterialStreams[NewOne.getMaterial()].push_back(NewOne);
+//    WasteStream.push_back(NewOne);
 }
 
 void CellContent::DrawConvBelt(){

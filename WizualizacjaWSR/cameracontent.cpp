@@ -76,28 +76,6 @@ void CameraContent::on_Timer_timeout()
 
         // Full Waste image is beyond the scene view
         if(WasteStream[0].y() < -WASTE_SIZE){
-            if(WasteStream[0].getHeaviness()){
-//                emit FAKEWasteSorted(WasteStream[0].getMaterial);
-                switch (WasteStream[0].getMaterial()) {
-                case 0:
-                    emit FAKEWasteSorted(0);
-                    break;
-                case 1:
-                    emit FAKEWasteSorted(1);
-                    break;
-                case 2:
-                    emit FAKEWasteSorted(2);
-                    break;
-                case 3:
-                    emit FAKEWasteSorted(3);
-                    break;
-                case 4:
-                    emit FAKEWasteSorted(4);
-                    break;
-                } // switch
-            } else {
-                emit FAKEWasteSorted(-1);
-            }
             WasteStream.erase(WasteStream.begin()); // FIFO
         } // Waste beyond scene
     } // if(!WasteStream.empty()
