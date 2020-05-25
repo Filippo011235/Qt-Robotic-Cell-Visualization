@@ -6,20 +6,6 @@
 #include <QColor>
 
 CellContent::CellContent(QWidget *parent): QGLWidget(parent){
-//    SortingFunctions MaterialSorting[5] = {
-//        CellContent::PETSort,
-//        KartonSort,
-//        HDPESort,
-//        AlumSort,
-//        NieznaneSort
-//    };
-//    MaterialSorting[0] = &CellContent::PETSort;
-//        KartonSort,
-//        HDPESort,
-//        AlumSort,
-//        NieznaneSort
-//    };
-
     _SpeedTimer = new QTimer(this);
     _SpeedTimer->setInterval(40);
     _SpeedTimer->setObjectName("Timer");
@@ -39,117 +25,69 @@ void CellContent::initializeGL(){
     glClearColor(1,1,1,0); // Background colour
     glEnable(GL_DEPTH_TEST); // For rendering 3D
     glEnable(GL_CULL_FACE); // Display only visible front of the objects
-
-//    static GLfloat lightPosition[4] = { 1.0, 1.0, 1.0, 1.0 };
-//    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
     glShadeModel(GL_SMOOTH);  // Smooth shading. The shadow smoothes the fine blend of colors through the polygon and smoothes the external light.
-
-//    glEnable(GL_LIGHTING);
-//    glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
-
-
 }
+
 
 void CellContent::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     SetScene();     // Isometric view
 
     // Coordinate system - for debug purposes
-    glBegin(GL_LINES);
-        glColor3d(1.0, 0.0, 0.0);
-        glVertex3d(0.0, 0.0, 0.0);
-        glVertex3d(3.0, 0.0, 0.0);
-        glColor3d(0.0, 1.0, 0.0);
-        glVertex3d(0.0, 0.0, 0.0);
-        glVertex3d(0.0, 3.0, 0.0);
-        glColor3d(0.0, 0.0, 1.0);
-        glVertex3d(0.0, 0.0, 0.0);
-        glVertex3d(0.0, 0.0, 3.0);
-    glEnd();
+//    glBegin(GL_LINES);
+//        glColor3d(1.0, 0.0, 0.0);
+//        glVertex3d(0.0, 0.0, 0.0);
+//        glVertex3d(3.0, 0.0, 0.0);
+//        glColor3d(0.0, 1.0, 0.0);
+//        glVertex3d(0.0, 0.0, 0.0);
+//        glVertex3d(0.0, 3.0, 0.0);
+//        glColor3d(0.0, 0.0, 1.0);
+//        glVertex3d(0.0, 0.0, 0.0);
+//        glVertex3d(0.0, 0.0, 3.0);
+//    glEnd();
 
-    QColor Bufor;
     DrawConvBelt();
     SetScene();
 
-//    for(int i = 0; i<5; ++i){
-//        Waste::MaterialsColours[i].getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-//    }
-//    Bufor = Waste::MaterialsColours[2];
-    Bufor = Qt::green;
-    Bufor.getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-    DrawContainer(-3,-3, rgb[0], rgb[1], rgb[2]);
-    SetScene();
-
-    Bufor = Qt::blue;
-    Bufor.getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-    DrawContainer(-3,-5.3, rgb[0], rgb[1], rgb[2]);
-    SetScene();
-
-    Bufor = Qt::yellow;
-    Bufor.getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-    DrawContainer(1,-3, rgb[0], rgb[1], rgb[2]);
-    SetScene();
-
-    Bufor = Qt::magenta;
-    Bufor.getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-    DrawContainer(1,-5.3, rgb[0], rgb[1], rgb[2]);
-    SetScene();
-
-    Bufor = Qt::red;
-    Bufor.getRgbF(&rgb[0], &rgb[1], &rgb[2]);
-    DrawContainer(-1,-7.5, rgb[0], rgb[1], rgb[2]);
-    SetScene();
+    for (int i=0; i < 5; ++i) {
+        DrawContainer(ContainerDistances_X[i], ContainerDistances_Z[i], MaterialsColours[i]);
+    }
 
     //**********************************************************
-
 
     for(int i = 0; i < 5; ++i){
         if(!MaterialStreams[i].empty()){
             for (unsigned int j = 0; j < MaterialStreams[i].size(); ++j) {
                 SetScene();
-                if(MaterialStreams[i][j].getZLocation() >= ContainerDistances_Z[i]+1){
+                // Before reaching Container
+                if(MaterialStreams[i][j].getZLocation() > ContainerDistances_Z[i]+1){
                     if(MaterialStreams[i][j].getZLocation() <= 2.5){
                         MaterialStreams[i][j].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
                         glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
                     } else {
                         glColor3f(_BeforeRecognition,_BeforeRecognition,_BeforeRecognition);
                     }
-
                     MaterialStreams[i][j].ZAdvance(ConvSpeed);
                     glTranslatef(0, 0, MaterialStreams[i][j].getZLocation());
                     glutSolidCube(1);
-
-                } else { // Point of Ascension
+                // Waste can be sorted to proper Container
+                } else {
                     MaterialStreams[i][j].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
                     glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
-                    switch (i) {
-                    case 0:
+                    // Depending on which Material Waste Stream it is, different condition apply
+                    if(i < 2){ // PET, Karton
                         if(MaterialStreams[i][j].getXLocation() <= ContainerDistances_X[i]+1.25){
-                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
-                            if(MaterialStreams[i][j].getHeaviness()){
-                                emit WasteSorted(i);
-                            }
-                        } else {
-                            MaterialStreams[i][j].XAdvance(ConvSpeed);
-                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
-                            glutSolidCube(1);
-                        }
-                        break;
-                    case 1:
-                        if(MaterialStreams[i][j].getXLocation() <= ContainerDistances_X[i]+1.25){
-                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
-                            if(MaterialStreams[i][j].getHeaviness()){
-                                emit WasteSorted(i);
-                            }
-                        } else {
-                            MaterialStreams[i][j].XAdvance(ConvSpeed);
-                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
-                            glutSolidCube(1);
-                        }
-                        break;
-                    case 2:
+                             MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
+                             if(MaterialStreams[i][j].getHeaviness()){
+                                 emit WasteSorted(i);
+                             }
+                         } else {
+                             MaterialStreams[i][j].XAdvance(ConvSpeed);
+                             glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
+                             glutSolidCube(1);
+                         }
+                    } else if (i >= 2 && i < 4){ // HDPE, Alum
                         if(MaterialStreams[i][j].getXLocation() >= ContainerDistances_X[i]+0.75){
                             MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
                             if(MaterialStreams[i][j].getHeaviness()){
@@ -160,32 +98,17 @@ void CellContent::paintGL(){
                             glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
                             glutSolidCube(1);
                         }
-                        break;
-                    case 3:
-                        if(MaterialStreams[i][j].getXLocation() >= ContainerDistances_X[i]+0.75){
-                            MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
-                            if(MaterialStreams[i][j].getHeaviness()){
-                                emit WasteSorted(i);
-                            }
-                        } else {
-                            MaterialStreams[i][j].XAdvance(-ConvSpeed);
-                            glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
-                            glutSolidCube(1);
-                        }
-                        break;
-                    case 4:
+                    } else { // Nieznany
                         MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
                         if(MaterialStreams[i][j].getHeaviness()){
                             emit WasteSorted(i);
                         }
-                        break;
                     }
                 }
 
-            }
-        }
-    }
-
+            } // for Waste in Stream
+        } // if(!MaterialStreams)
+    } // for( i < 5)
 
 }
 
@@ -199,15 +122,12 @@ void CellContent::resizeGL(int w, int h){
     glLoadIdentity();
     gluLookAt(0,0,5, 0,0,0, 0,1,0);
     updateGL();
-
 }
 
-void CellContent::AddWaste(Waste NewOne)
-{
-    NewOne.setZLocation(5); // Start behind the scene
-    NewOne.setXLocation(0);
+void CellContent::AddWaste(Waste NewOne){
+    NewOne.setZLocation(5); // Start at the edge of the ConvBelt
+    NewOne.setXLocation(0); // Aligned with the X axis
     MaterialStreams[NewOne.getMaterial()].push_back(NewOne);
-//    WasteStream.push_back(NewOne);
 }
 
 void CellContent::DrawConvBelt(){
@@ -273,7 +193,7 @@ void CellContent::DrawConvBelt(){
     glPopMatrix();
 }
 
-void CellContent::DrawContainer(float X_coord, float Z_coord, float R_colour, float G_colour, float B_colour){
+void CellContent::DrawContainer(float X_coord, float Z_coord, QColor Colour){
     /* ConvBelt is a rectangle in isometric view, made out of 3 sides: front, right side, and a top.
      * General dimensions are: */
     float x = 2;    // length
@@ -282,7 +202,9 @@ void CellContent::DrawContainer(float X_coord, float Z_coord, float R_colour, fl
     // For proper display, there is need for translation
     glTranslatef(X_coord, -0.5, Z_coord);
 
-    glColor3f(R_colour, G_colour, B_colour);
+    qreal rgb_colours[3];
+    Colour.getRgbF(&rgb_colours[0], &rgb_colours[1], &rgb_colours[2]);
+    glColor3f(rgb_colours[0], rgb_colours[1], rgb_colours[2]);
 
     /* Approximate representation using points as vertices
      *            _P4_______
@@ -346,6 +268,8 @@ void CellContent::DrawContainer(float X_coord, float Z_coord, float R_colour, fl
         glVertex3f(1.5,0,0);
     glEnd();
     glPopMatrix();
+
+    SetScene();
 }
 
 void CellContent::SetScene(){

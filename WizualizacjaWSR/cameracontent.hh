@@ -47,7 +47,6 @@ public:
     void ConvBeltMovement() {_SpeedTimer->start();}
     void ConvBeltStop() {_SpeedTimer->stop();}
 
-
 public slots:
     void on_Timer_timeout();
 };

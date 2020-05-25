@@ -7,11 +7,7 @@
 
 enum MaterialTypes { PET, Karton, HDPE, Alum, Nieznany };
 
-
-// QRECT NA QPOINT CZY COS
-
-
-class Waste: public QRect {
+class Waste{
 public:
     Waste(std::vector<MaterialTypes> CurrentMaterials);
     Waste(const Waste& WasteCopy);
@@ -27,6 +23,11 @@ public:
     float getXLocation() const {return XLocation;}
     void setXLocation(float NewLocation) {XLocation = NewLocation;}
 
+    int getCameraLocation() const {return CameraLocation;}
+    void setCameraLocation(int NewLocation) {CameraLocation = NewLocation;}
+    void AdvanceCamera(int Step) {CameraLocation -= Step;}
+
+
     // Material-Colour relation is also used in the CellContent
     /*static */QColor MaterialsColours[5] = {Qt::green, Qt::blue, Qt::yellow, Qt::magenta, Qt::red};
 
@@ -35,6 +36,7 @@ private:
     QColor Colour;
     float ZLocation;
     float XLocation;
+    int CameraLocation;
     int Heaviness_Coefficient; // For decreasing number of Heavy Waste
     bool isHeavy;
 };

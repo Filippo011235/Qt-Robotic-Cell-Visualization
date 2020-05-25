@@ -38,13 +38,10 @@ private:
     float ConvSpeed;
     float WasteZCoord;
     void DrawConvBelt();
-    void DrawContainer(float X_coord, float Z_coord, float R_colour, float G_colour, float B_colour);
+    void DrawContainer(float X_coord, float Z_coord, QColor Colour);
 //    void DrawBox();
     void SetScene();
     const float CameraDistance = 5;
-
-    void Sort(int idx);
-
 
     const float _BeforeRecognition = 0.5;
 
@@ -52,33 +49,7 @@ private:
     vector<Waste> MaterialStreams[5];
     float ContainerDistances_X[5] = {-3, -3, 1, 1, -1};
     float ContainerDistances_Z[5] = {-3,-5.3,-3,-5.3,-7.5};
-
-    vector<Waste> WasteStream;
-
-    vector<Waste> PETStream;
-    vector<Waste> KartonStream;
-    vector<Waste> HDPEStream;
-    vector<Waste> AlumStream;
-    vector<Waste> NieznaneStream;
-
-    // Sorting
-    typedef void (*SortingFunctions) ();
-    void PETSort();
-    void KartonSort();
-    void HDPESort();
-    void AlumSort();
-    void NieznaneSort();
-    SortingFunctions MaterialSorting[5];
-//    SortingFunctions MaterialSorting[5] = {
-//        this->PETSort,
-//        KartonSort,
-//        HDPESort,
-//        AlumSort,
-//        NieznaneSort
-//    };
-
-
-
+    QColor MaterialsColours[5] = {Qt::green, Qt::blue, Qt::yellow, Qt::magenta, Qt::red};
 };
 
 #endif // CELLCONTENT_HH

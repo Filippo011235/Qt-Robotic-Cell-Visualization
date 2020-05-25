@@ -40,11 +40,12 @@ void CameraContent::paintEvent(QPaintEvent *){
 
     // Iterate over Waste Stream and draw each Waste
     for(auto CurrentWaste : WasteStream){
-        if(CurrentWaste.y() < Threshold){ // Waste was recognized
-            Painter.fillRect(RectMiddle, CurrentWaste.y(),
+        const int CameraLocation = CurrentWaste.getCameraLocation();
+        if(CameraLocation < Threshold){ // Waste was recognized
+            Painter.fillRect(RectMiddle, CameraLocation,
                              WASTE_SIZE, WASTE_SIZE, CurrentWaste.getColour());
         } else {    // Yet to be classified
-            Painter.fillRect(RectMiddle, CurrentWaste.y(),
+            Painter.fillRect(RectMiddle, CameraLocation,
                              WASTE_SIZE, WASTE_SIZE, _BeforeRecognition);
         }
     }
@@ -53,7 +54,8 @@ void CameraContent::paintEvent(QPaintEvent *){
 
 void CameraContent::AddWaste(Waste NewOne)
 {
-    NewOne.setY(ConvBeltHeight); // Start beneath the scene
+//    NewOne.setY(ConvBeltHeight); // Start beneath the scene
+    NewOne.setCameraLocation(ConvBeltHeight); // Start beneath the scene
     WasteStream.push_back(NewOne);
 }
 
@@ -70,12 +72,13 @@ void CameraContent::on_Timer_timeout()
     // Update Waste Stream
     if(!WasteStream.empty()){
         for (unsigned int i= 0; i < WasteStream.size(); ++i) {
-            int Halo = WasteStream[i].y() - _ConvSpeed;
-            WasteStream[i].setY(Halo);
+            WasteStream[i].AdvanceCamera(_ConvSpeed);
+//            int Halo = WasteStream[i].y() - _ConvSpeed;
+//            WasteStream[i].setY(Halo);
         }
 
         // Full Waste image is beyond the scene view
-        if(WasteStream[0].y() < -WASTE_SIZE){
+        if(WasteStream[0].getCameraLocation() < -WASTE_SIZE){
             WasteStream.erase(WasteStream.begin()); // FIFO
         } // Waste beyond scene
     } // if(!WasteStream.empty()
