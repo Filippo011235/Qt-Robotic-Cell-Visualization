@@ -13,15 +13,34 @@ class CellContent : public QGLWidget
 {
     Q_OBJECT
 
+    void SetScene(); // resets transformations and creates isometric view
+    const float CameraDistance = 5;
+    QTimer *SpeedTimer;
+    float ConvSpeed;
+
+    // Waste related attributes
+    vector<Waste> MaterialStreams[5]; // Keeps track of all the Waste on the scene
+    const float RecognitionThreshold = 2.5;
+    qreal rgb[3]; // buffer for storing given Waste colour
+    const float BeforeRecognition = 0.5; // Colour value corresponding to dark gray
+
+    // CB and Containers related attributes
+    void DrawConvBelt();
+    void DrawContainer(float X_coord, float Z_coord, QColor Colour);
+    // Containers data
+    const float ContainerDistances_X[5] = {-3, -3, 1, 1, -1};
+    const float ContainerDistances_Z[5] = {-3,-5.3,-3,-5.3,-7.5};
+    QColor MaterialsColours[5] = {Qt::green, Qt::blue, Qt::yellow, Qt::magenta, Qt::red};
+
 public:
     CellContent(QWidget *parent = nullptr);
     ~CellContent();
 
     void AddWaste(Waste NewOne);
-//    void setConvSpeed(int NewInterval){_SpeedTimer->setInterval(NewInterval);};
+
     void setConvSpeed(float NewSpeed){ConvSpeed = NewSpeed;};
-    void ConvBeltMovement() {_SpeedTimer->start();}
-    void ConvBeltStop() {_SpeedTimer->stop();}
+    void ConvBeltMovement() {SpeedTimer->start();}
+    void ConvBeltStop() {SpeedTimer->stop();}
 
 protected:
     void initializeGL() override;
@@ -30,26 +49,6 @@ protected:
 
 signals:
     void WasteSorted(int);
-
-private:
-    QTimer *_SpeedTimer;
-    Waste *Kokos;
-    qreal rgb[3]; // Stores Waste colour
-    float ConvSpeed;
-    float WasteZCoord;
-    void DrawConvBelt();
-    void DrawContainer(float X_coord, float Z_coord, QColor Colour);
-//    void DrawBox();
-    void SetScene();
-    const float CameraDistance = 5;
-
-    const float _BeforeRecognition = 0.5;
-
-    // Keeps all the Waste on the scene
-    vector<Waste> MaterialStreams[5];
-    float ContainerDistances_X[5] = {-3, -3, 1, 1, -1};
-    float ContainerDistances_Z[5] = {-3,-5.3,-3,-5.3,-7.5};
-    QColor MaterialsColours[5] = {Qt::green, Qt::blue, Qt::yellow, Qt::magenta, Qt::red};
 };
 
 #endif // CELLCONTENT_HH

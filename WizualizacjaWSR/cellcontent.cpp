@@ -1,18 +1,15 @@
 #include "cellcontent.hh"
-
-//#define STEP 0.5
-
 #include <QtDebug>
 #include <QColor>
 
 CellContent::CellContent(QWidget *parent): QGLWidget(parent){
-    _SpeedTimer = new QTimer(this);
-    _SpeedTimer->setInterval(40);
-    _SpeedTimer->setObjectName("Timer");
+    SpeedTimer = new QTimer(this);
+    SpeedTimer->setInterval(40);
+    SpeedTimer->setObjectName("Timer");
 
     ConvSpeed = 0.20;
 
-    connect(_SpeedTimer, SIGNAL(timeout()),this,SLOT(updateGL()));
+    connect(SpeedTimer, SIGNAL(timeout()),this,SLOT(updateGL()));
     ConvBeltMovement();
 
     QMetaObject::connectSlotsByName(this);
@@ -32,88 +29,88 @@ void CellContent::initializeGL(){
 
 void CellContent::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    SetScene();     // Isometric view
-
-    // Coordinate system - for debug purposes
-//    glBegin(GL_LINES);
-//        glColor3d(1.0, 0.0, 0.0);
-//        glVertex3d(0.0, 0.0, 0.0);
-//        glVertex3d(3.0, 0.0, 0.0);
-//        glColor3d(0.0, 1.0, 0.0);
-//        glVertex3d(0.0, 0.0, 0.0);
-//        glVertex3d(0.0, 3.0, 0.0);
-//        glColor3d(0.0, 0.0, 1.0);
-//        glVertex3d(0.0, 0.0, 0.0);
-//        glVertex3d(0.0, 0.0, 3.0);
-//    glEnd();
-
-    DrawConvBelt();
     SetScene();
 
+    // CB & Containers
+    DrawConvBelt();
+    SetScene();
     for (int i=0; i < 5; ++i) {
         DrawContainer(ContainerDistances_X[i], ContainerDistances_Z[i], MaterialsColours[i]);
     }
 
-    //**********************************************************
-
-    for(int i = 0; i < 5; ++i){
+    // Waste
+    for(int i = 0; i < 5; ++i){ // Iterate over MaterialStreams
         if(!MaterialStreams[i].empty()){
-            for (unsigned int j = 0; j < MaterialStreams[i].size(); ++j) {
-                SetScene();
-                // Before reaching Container
-                if(MaterialStreams[i][j].getZLocation() > ContainerDistances_Z[i]+1){
-                    if(MaterialStreams[i][j].getZLocation() <= 2.5){
+            for (unsigned int j = 0; j < MaterialStreams[i].size(); ++j) { // Iterate over Waste in Stream
+
+                // Waste hasn't reached correct Container
+                if(MaterialStreams[i][j].getZLocation() > ContainerDistances_Z[i]+1){ // +1 == 1/2 Waste size
+
+                    // Decide about colour
+                    if(MaterialStreams[i][j].getZLocation() <= RecognitionThreshold){  // Waste classified
                         MaterialStreams[i][j].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
                         glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
-                    } else {
-                        glColor3f(_BeforeRecognition,_BeforeRecognition,_BeforeRecognition);
+                    } else { // Waste unclassified
+                        glColor3f(BeforeRecognition,BeforeRecognition,BeforeRecognition);
                     }
+
+                    // Advance in Z axis and draw Waste
                     MaterialStreams[i][j].ZAdvance(ConvSpeed);
                     glTranslatef(0, 0, MaterialStreams[i][j].getZLocation());
                     glutSolidCube(1);
-                // Waste can be sorted to proper Container
+
+                // Waste can be sorted:
                 } else {
+
+                    // read corresponding Material Colour fpr drawing
                     MaterialStreams[i][j].getColour().getRgbF(&rgb[0], &rgb[1], &rgb[2]);
                     glColor3f((float)rgb[0], (float)rgb[1], (float)rgb[2]);
+
                     // Depending on which Material Waste Stream it is, different condition apply
+
                     if(i < 2){ // PET, Karton
-                        if(MaterialStreams[i][j].getXLocation() <= ContainerDistances_X[i]+1.25){
+                        // It has reached hole in the Container
+                        if(MaterialStreams[i][j].getXLocation() <= ContainerDistances_X[i]+1.25){ // +1.25==Hole offset
                              MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
                              if(MaterialStreams[i][j].getHeaviness()){
                                  emit WasteSorted(i);
                              }
+                        // Has to move further in the X axis
                          } else {
                              MaterialStreams[i][j].XAdvance(ConvSpeed);
                              glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
                              glutSolidCube(1);
                          }
+
                     } else if (i >= 2 && i < 4){ // HDPE, Alum
-                        if(MaterialStreams[i][j].getXLocation() >= ContainerDistances_X[i]+0.75){
+                        // It has reached hole in the Container
+                        if(MaterialStreams[i][j].getXLocation() >= ContainerDistances_X[i]+0.75){ // +0.75==Hole offset
                             MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
                             if(MaterialStreams[i][j].getHeaviness()){
                                 emit WasteSorted(i);
                             }
+                        // Has to move further in the X axis
                         } else {
                             MaterialStreams[i][j].XAdvance(-ConvSpeed);
                             glTranslatef(MaterialStreams[i][j].getXLocation(), 0, MaterialStreams[i][j].getZLocation());
                             glutSolidCube(1);
                         }
+
                     } else { // Nieznany
+                        // Nieznany is a special case - when it reaches container hole in Z axis
                         MaterialStreams[i].erase(MaterialStreams[i].begin()); // FIFO;
                         if(MaterialStreams[i][j].getHeaviness()){
                             emit WasteSorted(i);
                         }
                     }
                 }
-
+                SetScene(); // Reset transformations after handling single Waste
             } // for Waste in Stream
         } // if(!MaterialStreams)
-    } // for( i < 5)
-
+    } // for all 5 WasteStreams
 }
 
 void CellContent::resizeGL(int w, int h){
-//    glViewport(0,0, w,h);
     glViewport(0, 0, (GLint)w, (GLint)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -136,7 +133,7 @@ void CellContent::DrawConvBelt(){
     float x = 2;    // length
     float y = 0.5;  // heigth
     float z = 10;   // depth
-    // For proper display, there is need for translation
+    // For proper display, there is a need for translation
     glTranslatef(-0.5*x,    // In order for middle of CB to be on the X axis
                  -1,        // Waste begins at height -0.5, and CB has 0.5 thickness
                  -5.5);     // Nice constant ;)
@@ -155,9 +152,9 @@ void CellContent::DrawConvBelt(){
     */
     float Points[7][3] = {{0, 0, z},  // P0
                           {x, 0, z},
-                          {x, y, z},  //.
-                          {0, y, z},  //.
-                          {0, y, 0},  //.
+                          {x, y, z},  // .
+                          {0, y, z},  // .
+                          {0, y, 0},  // .
                           {x, y, 0},
                           {x, 0, 0}}; // P6
 
@@ -194,17 +191,17 @@ void CellContent::DrawConvBelt(){
 }
 
 void CellContent::DrawContainer(float X_coord, float Z_coord, QColor Colour){
-    /* ConvBelt is a rectangle in isometric view, made out of 3 sides: front, right side, and a top.
+    /* Container is a rectangle in isometric view, made out of 3 sides: front, right side, and a top.
      * General dimensions are: */
     float x = 2;    // length
-    float y = 3;  // heigth
-    float z = 2;   // depth
-    // For proper display, there is need for translation
+    float y = 3;    // heigth
+    float z = 2;    // depth
+    // For proper display, there is a need for translation
     glTranslatef(X_coord, -0.5, Z_coord);
 
-    qreal rgb_colours[3];
-    Colour.getRgbF(&rgb_colours[0], &rgb_colours[1], &rgb_colours[2]);
-    glColor3f(rgb_colours[0], rgb_colours[1], rgb_colours[2]);
+    // Container Colour
+    Colour.getRgbF(&rgb[0], &rgb[1], &rgb[2]);
+    glColor3f(rgb[0], rgb[1], rgb[2]);
 
     /* Approximate representation using points as vertices
      *            _P4_______
@@ -221,9 +218,9 @@ void CellContent::DrawContainer(float X_coord, float Z_coord, QColor Colour){
     */
     float Points[7][3] = {{0, -y, z},  // P0
                           {x, -y, z},
-                          {x, 0, z},  //.
-                          {0, 0, z},  //.
-                          {0, 0, 0},  //.
+                          {x, 0, z},  // .
+                          {0, 0, z},  // .
+                          {0, 0, 0},  // .
                           {x, 0, 0},
                           {x, -y, 0}}; // P6
 
@@ -254,16 +251,15 @@ void CellContent::DrawContainer(float X_coord, float Z_coord, QColor Colour){
 
     glPopMatrix();
 
-    // Darkness within
-    glTranslatef(0.25,0.01,0.25);
+    // Darkness within... (so just a Container hole for Waste ;) )
+    glTranslatef(0.25,0.01,0.25); // Translate to a correct Container corner
 
-    glColor3f(0,0,0);
+    glColor3f(0,0,0); // Vantablack
 
     glPushMatrix();
     glBegin(GL_QUADS);
         glVertex3f(0,0,0);
         glVertex3f(0,0,1.5);
-
         glVertex3f(1.5,0,1.5);
         glVertex3f(1.5,0,0);
     glEnd();

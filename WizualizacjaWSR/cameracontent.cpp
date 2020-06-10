@@ -5,28 +5,24 @@
 #include <QPalette>
 
 #define WASTE_SIZE 50
-
-// Temporary includes:
-#include <QtDebug>
+#define CB_OFFSET 10
 
 CameraContent::CameraContent(QWidget *parent) : QWidget(parent)
 {
-    _SpeedTimer = new QTimer(this);
-    _SpeedTimer->setInterval(50);
-    _SpeedTimer->setObjectName("Timer");
+    SpeedTimer = new QTimer(this);
+    SpeedTimer->setInterval(50);
+    SpeedTimer->setObjectName("Timer");
 
-    _ConvBeltImage.load(":/ConvBelt.jpg");
-    ConvBeltHeight = _ConvBeltImage.height(); // used in Timer timeout
+    ConvBeltImage.load(":/ConvBelt.jpg");
+    ConvSpeed = 5; // Movement step
+    ConvBeltHeight = ConvBeltImage.height(); // used in Timer timeout
 
-    _TopConvLocation_y = 0;
-    _BottomConvLocation_y = _ConvBeltImage.height();
-    _ConvSpeed = 5;
+    // Both CB starting pos
+    CBLocation_y[0] = 0; // Top one
+    CBLocation_y[1] = ConvBeltHeight; // Bottom
 
-    connect(_SpeedTimer, SIGNAL(timeout()),this,SLOT(on_Timer_timeout()));
+    connect(SpeedTimer, SIGNAL(timeout()),this,SLOT(on_Timer_timeout()));
     ConvBeltMovement();
-
-    // WasteTemplate.setRect(TabMiddle_x+17,_BottomConvLocation_y,WASTE_SIZE,WASTE_SIZE);
-    WasteTemplate.setRect(RectMiddle,_BottomConvLocation_y,WASTE_SIZE,WASTE_SIZE);
 
     QMetaObject::connectSlotsByName(this);
 }
@@ -35,53 +31,48 @@ void CameraContent::paintEvent(QPaintEvent *){
     QPainter Painter(this);
 
     // Draw Top and Bottom Conveyor Belts
-    Painter.drawImage(TabMiddle_x, _TopConvLocation_y, _ConvBeltImage);
-    Painter.drawImage(TabMiddle_x, _BottomConvLocation_y, _ConvBeltImage);
+    for(unsigned int i = 0; i < 2; ++i){
+        Painter.drawImage(ConvBelt_x, CBLocation_y[i], ConvBeltImage);
+    }
 
     // Iterate over Waste Stream and draw each Waste
     for(auto CurrentWaste : WasteStream){
-        const int CameraLocation = CurrentWaste.getCameraLocation();
-        if(CameraLocation < Threshold){ // Waste was recognized
-            Painter.fillRect(RectMiddle, CameraLocation,
+        const int _2DLocation = CurrentWaste.get_2DLocation();
+        if(_2DLocation < ClassificationThreshold){ // Waste was recognized
+            Painter.fillRect(Waste_x, _2DLocation,
                              WASTE_SIZE, WASTE_SIZE, CurrentWaste.getColour());
         } else {    // Yet to be classified
-            Painter.fillRect(RectMiddle, CameraLocation,
+            Painter.fillRect(Waste_x, _2DLocation,
                              WASTE_SIZE, WASTE_SIZE, _BeforeRecognition);
         }
-    }
+    } // for WasteStream
 
 }
 
-void CameraContent::AddWaste(Waste NewOne)
-{
-//    NewOne.setY(ConvBeltHeight); // Start beneath the scene
-    NewOne.setCameraLocation(ConvBeltHeight); // Start beneath the scene
+void CameraContent::AddWaste(Waste NewOne) {
+    NewOne.set_2DLocation(ConvBeltHeight); // Start beneath the scene
     WasteStream.push_back(NewOne);
 }
 
 void CameraContent::on_Timer_timeout()
 {
     // Update Conveyor Belts
-    _TopConvLocation_y -= _ConvSpeed;
-    if (_TopConvLocation_y < -ConvBeltHeight) // Full CB image is beyond the scene view
-            _TopConvLocation_y = ConvBeltHeight-10;
-    _BottomConvLocation_y -= _ConvSpeed;
-    if (_BottomConvLocation_y < -ConvBeltHeight)
-            _BottomConvLocation_y = ConvBeltHeight-10;
+    for(unsigned int i = 0; i < 2; ++i){
+        CBLocation_y[i] -= ConvSpeed;
+        if (CBLocation_y[i] < -ConvBeltHeight) // Full CB image is beyond the scene view
+                CBLocation_y[i] = ConvBeltHeight-CB_OFFSET; // Loop CB back beneath the scene
+    }
 
     // Update Waste Stream
     if(!WasteStream.empty()){
         for (unsigned int i= 0; i < WasteStream.size(); ++i) {
-            WasteStream[i].AdvanceCamera(_ConvSpeed);
-//            int Halo = WasteStream[i].y() - _ConvSpeed;
-//            WasteStream[i].setY(Halo);
+            WasteStream[i].Advance_2D(ConvSpeed);
         }
-
-        // Full Waste image is beyond the scene view
-        if(WasteStream[0].getCameraLocation() < -WASTE_SIZE){
+        // Whole Waste image is beyond the scene view. Can be checked only for the first one
+        if(WasteStream[0].get_2DLocation() < -WASTE_SIZE){
             WasteStream.erase(WasteStream.begin()); // FIFO
-        } // Waste beyond scene
-    } // if(!WasteStream.empty()
+        }
+    }
     update();
 }
 

@@ -18,6 +18,18 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    Ui::MainWindow *ui;
+    CameraContent *CameraScene;
+    CellContent *CellScene;
+    vector<MaterialTypes> CurrentMaterials;
+
+    int ValuesForLineEdit[5] = {0};
+    QLineEdit * WeightDisplays[5]; // Allows for iteration over LineEdits
+
+    QTimer *WasteGenerator;
+    void GeneratingWaste() {WasteGenerator->start();}
+    void StopGenerating() {WasteGenerator->stop();}
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -34,19 +46,6 @@ private slots:
     void on_checkBoxHDPE_toggled(bool checked);
     void on_checkBoxAlum_toggled(bool checked);
     void on_checkBoxNieznany_toggled(bool checked);
-
-private:
-    Ui::MainWindow *ui;
-    CameraContent *CameraScene;
-    CellContent *CellScene;
-    vector<MaterialTypes> CurrentMaterials;
-    QTimer *_WasteGenerator;
-
-    int ValuesForLineEdit[5] = {0};
-    QLineEdit * WeightDisplays[5];
-
-    void GeneratingWaste() {_WasteGenerator->start();}
-    void StopGenerating() {_WasteGenerator->stop();}
 
 };
 #endif // MAINWINDOW_HH
